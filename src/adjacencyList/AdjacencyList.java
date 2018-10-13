@@ -13,6 +13,12 @@ public class AdjacencyList {
 	// Creating linked list of the linked lists (Nodes)
 	private static LinkedList<edge> adjLists[];
 	
+	// Create an array of all the values within the text file named inputArray
+	// Values 0 - 3 in this list are as follows: 0 - numbers of vertices, 1 - number of edges, 
+	// 2 - Directed / undirected, 3 - Weighted / Unweighed
+	// All values following 3 are values for the graph.
+	static List<Double> inputArray = new ArrayList<>();
+	
 	// Creating the "Vertices" aka Linked Lists
 	private static void graph(int vertices) {
 		
@@ -25,8 +31,22 @@ public class AdjacencyList {
 	}
 	
 	private static void addEdge(int src, int dest, double weight) {
-		edge newEdge = new edge(dest, weight);
+		
+		// By assigning the next value of every new edge to null by default
+		edge next = null;
+		
+		// Create a new edge using the passed in values and giving it a null next value
+		edge newEdge = new edge(dest, weight, next);
+		
+		// If this edge is not the first then assign the previous edges next to the newly created edge.
+		if(!adjLists[src].isEmpty()) {
+			adjLists[src].getLast().next = newEdge;
+		}
+		
+		// Add our edge to the list
 		adjLists[src].add(newEdge);
+		
+		
 	}
 	
 	
@@ -55,11 +75,7 @@ public class AdjacencyList {
 		File file = new File("src/Input.txt");
 		Scanner txtFile = new Scanner(file);
 		
-		// Create an array of all the values within the text file named inputArray
-		// Values 0 - 3 in this list are as follows: 0 - numbers of vertices, 1 - number of edges, 
-		// 2 - Directed / undirected, 3 - Weighted / Unweighed
-		// All values following 3 are values for the graph.
-		List<Double> inputArray = new ArrayList<>();
+
 		
 		while(txtFile.hasNextDouble()) {
 			inputArray.add(txtFile.nextDouble());
@@ -80,7 +96,6 @@ public class AdjacencyList {
 		
 		for(int i = 0; i < numEdges; i++) {
 			addEdge(inputArray.get(vertexTracker).intValue(), inputArray.get(edgeTracker).intValue(), inputArray.get(weightTracker));
-			
 			vertexTracker = (vertexTracker + 3);
 			edgeTracker = (edgeTracker + 3);
 			weightTracker = (weightTracker + 3);
@@ -94,10 +109,12 @@ class edge {
 	
 	int vertex;
 	double weight;
+	edge next;
 	
-	public edge(int v, double w) {
+	public edge(int v, double w, edge e) {
 		vertex = v;
 		weight = w;
+		next = e;
 	}
 	
 }
