@@ -20,7 +20,7 @@ public class AdjacencyList {
 	static List<Double> inputArray = new ArrayList<>();
 	
 	// Creating the "Vertices" aka Linked Lists
-	private static void graph(int vertices) {
+	private static void initializeGraph(int vertices) {
 		
 		adjLists = new LinkedList[vertices];
 		
@@ -30,9 +30,9 @@ public class AdjacencyList {
 		
 	}
 	
-	private static void addEdge(int src, int dest, double weight) {
+	private static void addEdgeWeighted(int src, int dest, double weight) {
 		
-		// By assigning the next value of every new edge to null by default
+		// Assigning the next value of every new edge to null by default
 		edge next = null;
 		
 		// Create a new edge using the passed in values and giving it a null next value
@@ -49,7 +49,23 @@ public class AdjacencyList {
 		
 	}
 	
-	
+	private static void addEdgeUnweighted(int src, int dest) {
+		
+		// Assigning the next value of every new edge to null by default
+		edge next = null;
+		
+		// Create a new edge using the passed in values and giving it a null next value and a 0 for weight
+		edge newEdge = new edge(dest, 0, next);
+		
+		// If this edge is not the first then assign the previous edges next to the newly created edge.
+		if(!adjLists[src].isEmpty()) {
+			adjLists[src].getLast().next = newEdge;
+		}
+		
+		// Add our edge to the list
+		adjLists[src].add(newEdge);
+		
+	}
 	
 	// Check flag if graph is directed.
 	private static boolean isDirected(Double inputValue) {
@@ -87,24 +103,39 @@ public class AdjacencyList {
 		int numVertices = inputArray.get(0).intValue();
 		int numEdges = inputArray.get(1).intValue();
 		
-		graph(numVertices);
+		initializeGraph(numVertices);
 		
-		int vertexTracker = 4;
-		int edgeTracker = 5;
-		int weightTracker = 6;
-		
-		
-		for(int i = 0; i < numEdges; i++) {
-			addEdge(inputArray.get(vertexTracker).intValue(), inputArray.get(edgeTracker).intValue(), inputArray.get(weightTracker));
-			vertexTracker = (vertexTracker + 3);
-			edgeTracker = (edgeTracker + 3);
-			weightTracker = (weightTracker + 3);
+		// Check if graph is weighted or unweighted, then build edges depending on this. 
+		// Non-weighted graphs will just have edges created with 0 weight.
+		if(isWeighted == true) {
+			int vertexTracker = 4;
+			int edgeTracker = 5;
+			int weightTracker = 6;
+			
+			
+			for(int i = 0; i < numEdges; i++) {
+				addEdgeWeighted(inputArray.get(vertexTracker).intValue(), inputArray.get(edgeTracker).intValue(), inputArray.get(weightTracker));
+				vertexTracker = (vertexTracker + 3);
+				edgeTracker = (edgeTracker + 3);
+				weightTracker = (weightTracker + 3);
+			}
+		} else {
+			int vertexTracker = 4;
+			int edgeTracker = 5;
+			
+			for(int i = 0; i < numEdges; i++) {
+				addEdgeUnweighted(inputArray.get(vertexTracker).intValue(), inputArray.get(edgeTracker).intValue());
+				vertexTracker = (vertexTracker + 2);
+				edgeTracker = (edgeTracker + 2);
+			}
+			
 		}
-		
-	}
 
+	}
 }
 
+
+// Edge objects
 class edge {
 	
 	int vertex;
@@ -117,4 +148,17 @@ class edge {
 		next = e;
 	}
 	
+}
+
+// Graph objects
+class graph {
+	int numberOfVertices;
+	int numberOfEdges;
+	boolean directed;
+	
+	public graph(int v, int e, boolean d) {
+		numberOfVertices = v;
+		numberOfEdges = e;
+		directed = d;
+	}
 }
