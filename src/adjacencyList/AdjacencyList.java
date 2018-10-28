@@ -1,9 +1,6 @@
 package adjacencyList;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.File;
 
@@ -72,7 +69,70 @@ public class AdjacencyList {
             System.out.println("\n");
         }
 
+
 	}
+	
+	// Printing a BFS style representation of our graph.
+	private static void BFS(Graph graph) {
+		
+		System.out.println("Print BFS:\n");
+		
+		for(int i=0; i<graph.getNumberOfVertices();i++) {
+			
+			System.out.println("Process " + i + " early\n");
+			
+			for(AdjacencyList.Edge degree: graph.adjListArray[i]) {
+				System.out.println("Process edge " + i + " " + degree.vertex + "\n");
+			}
+			
+			System.out.println("Process " + i + " late\n");
+		}
+
+	}
+
+    // Printing a DFS style representation of our graph.
+	private static void DFS(Graph graph) {
+
+        boolean visited[] = new boolean[graph.numberOfVertices];
+        int parent[] = new int[graph.numberOfVertices];
+        //boolean processed[] = new boolean[graph.numberOfVertices];
+
+        System.out.println("Print DFS:\n");
+        for(int i=0; i < graph.numberOfVertices; ++i) {
+            if(visited[i] == false) {
+                DFSrec(graph, i, visited, parent);
+            }
+        }
+    }
+
+    private static void DFSrec(Graph graph, int vertStart, boolean visited[], int parent[]) {
+
+        int y;
+
+        visited[vertStart] = true;
+        //process_vertex_early(vertStart);
+        System.out.println("Process " + vertStart + " early\n");
+
+        for(AdjacencyList.Edge degree: graph.adjListArray[vertStart]) {
+
+            y = degree.vertex;
+            if(!visited[y]) {
+                parent[y] = vertStart;
+                //process_edge(vertStart,y);
+                System.out.println("Process edge " + vertStart + " " + y + "\n");
+                DFSrec(graph, y, visited, parent);
+
+            } else if((!visited[y]) || (graph.getIsDirected())) {
+                //process_edge(vertStart,y);
+                System.out.println("Process edge " + vertStart + " " + y + "\n");
+            }
+
+        }
+
+        System.out.println("Process " + vertStart + " late\n");
+        //process_vertex_late(vertStart);
+
+    }
 
 	private static class Graph {
 
@@ -173,6 +233,7 @@ public class AdjacencyList {
         // Non-weighted graphs will just have edges created with 0 weight.
         if(graph.getIsWeighted() == true) {
 
+
             int vertexTracker = 4;
             int edgeTracker = 5;
             int weightTracker = 6;
@@ -218,6 +279,10 @@ public class AdjacencyList {
 
 
         }
+
 		printGraph(graph);
+		BFS(graph);
+		DFS(graph);
+
 	}
 }
