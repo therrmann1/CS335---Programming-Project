@@ -72,23 +72,63 @@ public class AdjacencyList {
 
 	}
 	
-	// Printing a BFS style representation of our graph.
 	private static void BFS(Graph graph) {
+		boolean processed[] = new boolean[graph.getNumberOfVertices()];
+		boolean discovered[] = new boolean[graph.getNumberOfVertices()];
+		int parent[] = new int[graph.getNumberOfVertices()];
+		
+		for(int i = 0;i< graph.getNumberOfVertices();i++) {
+			processed[i] = discovered[i] =  false;
+			parent[i] = -1;
+		}
+		
+		BFSrec(graph, discovered, processed, parent);
+	}
+	
+	// Printing a BFS style representation of our graph.
+	private static void BFSrec(Graph graph, boolean discovered[], boolean processed[], int parent[]) {
+		PriorityQueue q = new PriorityQueue();
+		int v;
+		int y;
+		ArrayList<Edge> p = new ArrayList<Edge>();
+		
+		for(int i=0; i<graph.getNumberOfVertices();i++) {
+			q.add(i);
+		}
 		
 		System.out.println("Print BFS:\n");
 		
-		for(int i=0; i<graph.getNumberOfVertices();i++) {
+		while(!q.isEmpty()) {
+			System.out.println("Process " + q.peek() + " early\n");
+			processed[(int)q.peek()] = true;
+			v = (int)q.remove();
 			
-			System.out.println("Process " + i + " early\n");
-			
-			for(AdjacencyList.Edge degree: graph.adjListArray[i]) {
-				System.out.println("Process edge " + i + " " + degree.vertex + "\n");
+			for(int i=0; i<graph.adjListArray[v].size(); i++) {
+				p.add(graph.adjListArray[v].get(i));
 			}
 			
-			System.out.println("Process " + i + " late\n");
+			
+			while(p.size() > 0) {
+				int counter = 0;
+				y = p.remove(counter).vertex;
+				
+				if((processed[y] == false) || graph.isDirected) {
+					System.out.println("Process edge " + v + " " + y + "\n");
+				} 
+				
+				if(discovered[y] == false) {
+					discovered[y] = true;
+					parent[y] = v;
+				}
+				
+				counter++;
+			}
+			
+			System.out.println("Process " + v + " late\n");
 		}
 
 	}
+	
 
     // Printing a DFS style representation of our graph.
 	private static void DFS(Graph graph) {
