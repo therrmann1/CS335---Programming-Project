@@ -3,7 +3,6 @@ package adjacencyList;
 import java.util.*;
 import java.io.FileNotFoundException;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.io.File;
 
 public class AdjacencyList {
@@ -209,12 +208,13 @@ public class AdjacencyList {
 
         boolean visited[] = new boolean[graph.numberOfVertices];
         int parent[] = new int[graph.numberOfVertices];
-        //boolean processed[] = new boolean[graph.numberOfVertices];
+        boolean processed[] = new boolean[graph.numberOfVertices];
+        int entry_time[] = new int[graph.numberOfVertices];
 
         System.out.println("Print DFS:\n");
         for(int i=0; i < graph.numberOfVertices; ++i) {
-            if(visited[i] == false) {
-                DFSrec(graph, i, visited, parent);
+            if(processed[i] == false) {
+                DFSrec(graph, i, visited, parent, processed, entry_time);
             }
         }
         
@@ -225,32 +225,57 @@ public class AdjacencyList {
         
     }
 
-    private static void DFSrec(Graph graph, int vertStart, boolean visited[], int parent[]) {
+    private static void DFSrec(Graph graph, int vertStart,
+                               boolean visited[], int parent[],
+                               boolean processed[], int entry_time[]) {
 
-        int y;
+        int vertSucc;
+        int time = 0;
 
         visited[vertStart] = true;
+        time++;
+        entry_time[vertStart] = time;
+
         //process_vertex_early(vertStart);
         System.out.println("Process " + vertStart + " early\n");
 
         for(AdjacencyList.Edge degree: graph.adjListArray[vertStart]) {
 
-            y = degree.vertex;
-            if(!visited[y]) {
-                parent[y] = vertStart;
-                //process_edge(vertStart,y);
-                System.out.println("Process edge " + vertStart + " " + y + "\n");
-                DFSrec(graph, y, visited, parent);
+            vertSucc = degree.vertex;
+            if(!visited[vertSucc]) {
 
-            } else if((!visited[y]) || (graph.getIsDirected())) {
-                //process_edge(vertStart,y);
-                System.out.println("Process edge " + vertStart + " " + y + "\n");
+                parent[vertSucc] = vertStart;
+                DFSedgeType(vertStart, vertSucc, visited, parent, processed, entry_time);
+                DFSrec(graph, vertSucc, visited, parent, processed, entry_time);
+
+            } else if((!processed[vertSucc] && (parent[vertStart] != vertSucc)) || (graph.getIsDirected())) {
+                DFSedgeType(vertStart, vertSucc, visited, parent, processed, entry_time);
             }
 
         }
 
         System.out.println("Process " + vertStart + " late\n");
+
+        time++;
         //process_vertex_late(vertStart);
+
+        processed[vertStart] = true;
+
+    }
+
+    private static void DFSedgeType(int vertStart, int vertSucc,
+                                    boolean visited[], int parent[],
+                                    boolean processed[], int entry_time[]) {
+
+        if(parent[vertSucc] == vertStart ) {
+            System.out.println("Process edge " + vertStart + " " + vertSucc + " (Tree edge)" + "\n");
+        } else if (visited[vertSucc] && !processed[vertSucc]) {
+            System.out.println("Process edge " + vertStart + " " + vertSucc + " (Backward edge)" + "\n");
+        } else if (processed[vertSucc] && (entry_time[vertSucc] > entry_time[vertStart])) {
+            System.out.println("Process edge " + vertStart + " " + vertSucc + " (Forward edge)" + "\n");
+        } else if (processed[vertSucc] && (entry_time[vertSucc] < entry_time[vertStart])) {
+            System.out.println("Process edge " + vertStart + " " + vertSucc + " (Cross edge)" + "\n");
+        }
 
     }
     
