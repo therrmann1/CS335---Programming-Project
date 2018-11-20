@@ -184,9 +184,9 @@ public class AdjacencyList {
 							System.out.println("Process edge " + v + " " + y + " (Forward edge)\n");
 						} else if(!processed[y]) {
 							System.out.println("Process edge " + v + " " + y + " (Cross edge)\n");
-						}
-					} else {
+						} else {
 						System.out.println("Process edge " + v + " " + y + " (back edge)\n");
+						}
 					}
 				}
 
