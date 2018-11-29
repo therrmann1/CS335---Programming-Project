@@ -178,15 +178,13 @@ public class AdjacencyList {
 				}
 				
 				if(graph.isDirected) {
-					if(depth[y] - depth[v] >= 0) {
 						if(parent[y] == v) {
-							System.out.println("Process edge " + v + " " + y + " (Forward edge)\n");
-						} else if(!processed[y]) {
-							System.out.println("Process edge " + v + " " + y + " (Cross edge)\n");
+							System.out.println("Process edge " + v + " " + y + " (Tree edge)\n");
+						} else if(depth[y] < depth[v]) {
+							System.out.println("Process edge " + v + " " + y + " (Back edge)\n");
 						} else {
-						System.out.println("Process edge " + v + " " + y + " (back edge)\n");
+						System.out.println("Process edge " + v + " " + y + " (Cross edge)\n");
 						}
-					}
 				}
 
 				// Check if graph is directed or undirected and make sure to only have tree and cross edges for 
